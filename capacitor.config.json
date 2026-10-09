@@ -1,0 +1,10 @@
+{
+  "appId": "com.e10e04.mangareader",
+  "appName": "Manga Reader",
+  "webDir": "www",
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  }
+}

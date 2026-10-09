@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#111113">
+  <meta name="description" content="Scannez et organisez votre bibliothèque manga.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+  <title>Manga — votre bibliothèque</title>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#home"><span class="brand-mark">漫</span><span>MANGA<span class="brand-light"> / READER</span></span></a>
+      <div class="side-label">ESPACE PERSONNEL</div>
+      <nav aria-label="Navigation principale">
+        <a class="nav-item active" href="#home"><span>⌂</span> Vue d’ensemble</a>
+        <a class="nav-item" href="#library"><span>▤</span> Ma bibliothèque <b id="nav-count">0</b></a>
+        <a class="nav-item" href="#scanner"><span>⌕</span> Scanner une source</a>
+      </nav>
+      <div class="side-bottom"><div class="avatar">M</div><div><strong>Ma collection</strong><small>Stockée sur cet appareil</small></div><span class="more">···</span></div>
+    </aside>
+
+    <main class="main" id="home">
+      <header class="topbar">
+        <div class="mobile-brand"><span class="brand-mark">漫</span> MANGA / READER</div>
+        <div class="breadcrumb">ESPACE PERSONNEL <span>/</span> <b id="crumb">VUE D’ENSEMBLE</b></div>
+        <button class="icon-button" id="theme-toggle" aria-label="Changer le thème" title="Changer le thème">◐</button>
+      </header>
+
+      <section class="welcome">
+        <div><p class="eyebrow"><i></i> VOTRE ESPACE DE LECTURE</p><h1>Votre prochaine<br><em>aventure</em> vous attend.</h1><p class="lead">Retrouvez vos séries, suivez les nouveaux chapitres et gardez votre progression au même endroit.</p></div>
+        <div class="welcome-art" aria-hidden="true"><div class="sun"></div><div class="art-line line-one"></div><div class="art-line line-two"></div><div class="art-vertical"></div><span>読</span></div>
+      </section>
+
+      <section class="scan-card" id="scanner">
+        <div class="scan-heading"><div class="scan-icon">⌕</div><div><h2>Ajouter un manga</h2><p>Collez l’adresse de sa fiche pour récupérer les chapitres.</p></div><span class="source-chip"><i></i> SOURCES WEB</span></div>
+        <form id="scan-form" class="scan-form"><div class="url-wrap"><span>↗</span><input id="manga-url" type="url" inputmode="url" placeholder="https://exemple.com/manga/…" autocomplete="url" required><button type="button" class="paste-button" id="paste-url">Coller</button></div><button class="primary-button" type="submit"><span>Scanner</span><span>→</span></button></form>
+        <div class="scan-status" id="scan-status" role="status" aria-live="polite">Connecteurs indépendants · Les résultats sont enregistrés sur cet appareil</div>
+      </section>
+
+      <section class="library-section" id="library">
+        <div class="section-heading"><div><p class="eyebrow">VOTRE COLLECTION</p><h2>Ma bibliothèque <span id="library-count">00</span></h2></div><a class="text-link" href="#library">Tout voir <span>↗</span></a></div>
+        <div class="library-tools"><label class="search-box"><span>⌕</span><input id="search-input" type="search" placeholder="Rechercher un manga, un auteur, un genre…"><kbd>⌘ K</kbd></label><div class="tool-select"><select id="sort-select" aria-label="Trier les mangas"><option value="recent">Ajout récent</option><option value="title">Titre A–Z</option><option value="chapters">Nombre de chapitres</option><option value="progress">Progression</option></select><span>⌄</span></div></div>
+        <div class="filter-row" id="filters"><button class="filter active" data-filter="all">Tout <span id="filter-all">0</span></button><button class="filter" data-filter="reading">En cours</button><button class="filter" data-filter="unread">À commencer</button><button class="filter" data-filter="complete">Terminés</button><span class="filter-divider"></span><button class="filter" data-filter="favorites">♥ Favoris</button></div>
+        <div class="manga-grid" id="manga-grid"></div>
+        <div class="empty-state" id="empty-state" hidden><div>漫</div><h3>Aucun manga trouvé</h3><p>Essayez une autre recherche ou scannez une fiche pour commencer votre collection.</p></div>
+      </section>
+      <footer>VOTRE BIBLIOTHÈQUE, À VOTRE RYTHME <span>·</span> DONNÉES CONSERVÉES SUR CET APPAREIL</footer>
+    </main>
+  </div>
+  <dialog class="reader-dialog" id="reader-dialog" aria-label="Lecteur manga">
+    <div class="reader-shell">
+      <header class="reader-toolbar"><button class="reader-back" id="reader-back" hidden>← Chapitres</button><div class="reader-heading"><span id="reader-kicker">BIBLIOTHÈQUE</span><h2 id="reader-title">Choisir un chapitre</h2></div><div class="reader-actions" id="reader-actions"><button id="jump-bookmark" title="Revenir au chapitre en cours" aria-label="Revenir au chapitre en cours">⚑</button><button id="filter-downloads" title="Afficher les chapitres téléchargés" aria-label="Afficher les chapitres téléchargés" aria-pressed="false">⇩</button><button id="refresh-chapters" title="Actualiser la liste des chapitres" aria-label="Actualiser la liste des chapitres">↻</button></div><button class="reader-fullscreen" id="reader-fullscreen" aria-label="Passer en plein écran" title="Plein écran" hidden>⛶</button><button class="reader-close" id="reader-close" aria-label="Fermer le lecteur">×</button></header>
+      <section class="chapter-picker-view" id="chapter-picker-view"><div class="chapter-picker-tools"><label class="search-box"><span>⌕</span><input id="chapter-search" type="search" placeholder="Rechercher un chapitre…"></label><span id="chapter-total"></span></div><div class="chapter-list" id="chapter-list"></div></section>
+      <section class="reader-view" id="reader-view" hidden><div class="reader-controls"><button id="reader-older">← Précédent</button><span id="reader-page-label">Sélectionnez un chapitre</span><button id="reader-newer">Suivant →</button></div><div class="reader-pages" id="reader-pages"></div><div class="reader-load-status" id="reader-load-status" role="status"></div></section>
+    </div>
+  </dialog>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>
