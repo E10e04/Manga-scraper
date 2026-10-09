@@ -27,6 +27,11 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          # setup-android@v3 defaults to the obsolete SDK package "tools".
+          # Install platform-tools here; the next step installs the required
+          # Android platform and build-tools versions explicitly.
+          packages: platform-tools
 
       - name: Install Android platform tools
         run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
