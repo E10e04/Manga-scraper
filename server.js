@@ -50,18 +50,18 @@ async function resolvePublic(host) {
   // Pin the chosen, validated address for the request to prevent DNS rebinding.
   return records[0];
 }
-function requestPage(url, redirects = 0) {
+function requestPage(url, redirects = 0, referer = `${url.origin}/`) {
   return new Promise(async (resolve, reject) => {
     try {
       if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password || (url.port && !['80','443'].includes(url.port))) throw Error('Seules les adresses HTTP/HTTPS publiques sont acceptées.');
       if (redirects > 4) throw Error('Trop de redirections.');
       const target = await resolvePublic(url.hostname);
       const transport = url.protocol === 'https:' ? https : http;
-      const req = transport.request(url, { method:'GET', headers:{ 'User-Agent':'MangaReaderPreview/1.0', Accept:'text/html,application/xhtml+xml;q=0.9,*/*;q=0.1' }, lookup:(_hostname,options,callback)=>options?.all?callback(null,[target]):callback(null,target.address,target.family) }, res => {
+      const req = transport.request(url, { method:'GET', headers:{ 'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36', Accept:'text/html,application/xhtml+xml,application/json,image/avif,image/webp,image/apng,*/*;q=0.8', 'Accept-Language':'fr-FR,fr;q=0.9,en;q=0.7', Referer:referer }, lookup:(_hostname,options,callback)=>options?.all?callback(null,[target]):callback(null,target.address,target.family) }, res => {
         if ([301,302,303,307,308].includes(res.statusCode) && res.headers.location) {
           res.resume();
           const next = new URL(res.headers.location, url);
-          requestPage(next, redirects + 1).then(resolve, reject);
+          requestPage(next, redirects + 1, referer).then(resolve, reject);
           return;
         }
         if (res.statusCode >= 300 && res.statusCode < 400) { res.resume(); reject(Error('Redirection invalide.')); return; }
@@ -112,7 +112,10 @@ const server = http.createServer(async (req, res) => {
     try {
       const raw = new URL(req.url, 'http://localhost').searchParams.get('url');
       if (!raw || raw.length > 2048) throw Error('Adresse d’image invalide.');
-      const result = await requestPage(new URL(raw));
+      const requestUrl = new URL(req.url, 'http://localhost');
+      const referer = requestUrl.searchParams.get('referer') || `${new URL(raw).origin}/`;
+      if (!['http:', 'https:'].includes(new URL(referer).protocol)) throw Error('Adresse de référence invalide.');
+      const result = await requestPage(new URL(raw), 0, referer);
       if (!/^image\/(jpeg|png|webp|avif|gif)$/i.test(result.contentType.split(';')[0])) throw Error('La ressource reçue n’est pas une image reconnue.');
       res.writeHead(200, {'Content-Type':result.contentType.split(';')[0], 'Cache-Control':'private, max-age=3600', 'X-Content-Type-Options':'nosniff'});
       res.end(result.body);
