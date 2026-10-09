@@ -1,6 +1,6 @@
 # Manga Reader
 
-Application mobile de bibliothèque et de lecture manga. L’interface fonctionne dans un navigateur et peut être emballée en APK Android avec Capacitor.
+Application mobile de bibliothèque et de lecture manga. L’interface fonctionne dans un navigateur et peut être téléchargé en application mobile ( Voir la page des releases )
 
 ## Aperçu web
 
