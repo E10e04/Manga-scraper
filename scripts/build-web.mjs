@@ -7,4 +7,5 @@ const files = ['index.html', 'app.js', 'styles.css', 'manifest.webmanifest', 'sw
 
 await mkdir(output, { recursive: true });
 await Promise.all(files.map(file => copyFile(resolve(root, file), resolve(output, file))));
-console.log(`Copied ${files.length} app files to www/`);
+await copyFile(resolve(root, 'assets/icon.svg'), resolve(output, 'icon.svg'));
+console.log(`Copied ${files.length + 1} app files to www/`);
